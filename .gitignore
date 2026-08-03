@@ -1,0 +1,21 @@
+# Compilación de SwiftPM
+.build/
+.swiftpm/
+*.xcodeproj
+
+# Empaquetado
+*.dmg
+*.app
+
+# Binarios compilados de las herramientas: se regeneran con
+#   swiftc herramientas/rescatar.swift -o herramientas/rescatar
+herramientas/clasificar
+herramientas/rescatar
+
+# Bóvedas: jamás deben salir de esta máquina
+*.boveda
+*.peekb
+
+# macOS
+.DS_Store
+._*
