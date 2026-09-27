@@ -7,6 +7,8 @@
 # El orden importa: las pruebas van PRIMERO. Publicar una versión rota de una app que
 # guarda archivos cifrados es mucho más caro que esperar veinte segundos.
 set -e
+# Sin pipefail, «pruebas | tail» toma el código de tail y publica aunque fallen.
+set -o pipefail
 
 cd "$(dirname "$0")"
 VERSION="$1"
