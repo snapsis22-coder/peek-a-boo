@@ -281,12 +281,26 @@ public struct VistaBovedas: View {
     }
 }
 
-#Preview("Bóvedas") {
-    VistaBovedas()
-        .environment(VaultStore.ejemploLista())
+// Con PreviewProvider y no con #Preview: la macro necesita Xcode y este proyecto
+// se compila con las herramientas de línea de comandos.
+struct Vista_Bvedas_4: PreviewProvider {
+    static var previews: some View {
+        Group {
+            VistaBovedas()
+                .environment(VaultStore.ejemploLista())
+        }
+        .previewDisplayName("Bóvedas")
+    }
 }
 
-#Preview("Trabajando") {
-    VistaBovedas()
-        .environment(VaultStore.ejemploTrabajando())
+// Con PreviewProvider y no con #Preview: la macro necesita Xcode y este proyecto
+// se compila con las herramientas de línea de comandos.
+struct Vista_Trabajando_5: PreviewProvider {
+    static var previews: some View {
+        Group {
+            VistaBovedas()
+                .environment(VaultStore.ejemploTrabajando())
+        }
+        .previewDisplayName("Trabajando")
+    }
 }

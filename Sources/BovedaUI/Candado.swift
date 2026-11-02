@@ -246,14 +246,21 @@ struct Metal {
         brillo: Color(red: 0.97, green: 0.97, blue: 0.99))
 }
 
-#Preview("Candado") {
-    HStack(spacing: 20) {
-        Candado(lado: 110)
-        Candado(alzado: 1, lado: 110)
-        Candado(alzado: 1, giro: 0.5, lado: 110)
-        Candado(alzado: 1, giro: 1, lado: 110)
-        Candado(lado: 110, metal: .laton)
-        Candado(lado: 110, metal: .grafito)
+// Con PreviewProvider y no con #Preview: la macro necesita Xcode y este proyecto
+// se compila con las herramientas de línea de comandos.
+struct Vista_Candado_3: PreviewProvider {
+    static var previews: some View {
+        Group {
+            HStack(spacing: 20) {
+                Candado(lado: 110)
+                Candado(alzado: 1, lado: 110)
+                Candado(alzado: 1, giro: 0.5, lado: 110)
+                Candado(alzado: 1, giro: 1, lado: 110)
+                Candado(lado: 110, metal: .laton)
+                Candado(lado: 110, metal: .grafito)
+            }
+            .padding(30)
+        }
+        .previewDisplayName("Candado")
     }
-    .padding(30)
 }

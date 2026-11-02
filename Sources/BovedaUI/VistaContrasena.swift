@@ -206,12 +206,26 @@ public struct VistaContrasena: View {
     }
 }
 
-#Preview("Entrar") {
-    VistaContrasena(esPrimeraVez: false)
-        .environment(VaultStore.ejemploContrasena())
+// Con PreviewProvider y no con #Preview: la macro necesita Xcode y este proyecto
+// se compila con las herramientas de línea de comandos.
+struct Vista_Entrar_6: PreviewProvider {
+    static var previews: some View {
+        Group {
+            VistaContrasena(esPrimeraVez: false)
+                .environment(VaultStore.ejemploContrasena())
+        }
+        .previewDisplayName("Entrar")
+    }
 }
 
-#Preview("Primer arranque") {
-    VistaContrasena(esPrimeraVez: true)
-        .environment(VaultStore.ejemploPrimeraVez())
+// Con PreviewProvider y no con #Preview: la macro necesita Xcode y este proyecto
+// se compila con las herramientas de línea de comandos.
+struct Vista_Primer_arranque_7: PreviewProvider {
+    static var previews: some View {
+        Group {
+            VistaContrasena(esPrimeraVez: true)
+                .environment(VaultStore.ejemploPrimeraVez())
+        }
+        .previewDisplayName("Primer arranque")
+    }
 }

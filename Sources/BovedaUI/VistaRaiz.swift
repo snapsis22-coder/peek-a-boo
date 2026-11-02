@@ -15,95 +15,102 @@ public struct VistaRaiz: View {
         @Bindable var store = store
 
         Group {
-            switch store.estado {
-            case .primeraVez:
-                VistaContrasena(esPrimeraVez: true)
-            case .contrasena:
-                VistaContrasena(esPrimeraVez: false)
-            case .lista:
-                VistaBovedas()
-            case .detalle:
-                if let actual = store.bovedaActual {
-                    VistaDetalle(boveda: actual)
-                } else {
-                    // La bóveda desapareció (disco expulsado, por ejemplo).
+                switch store.estado {
+                case .primeraVez:
+                    VistaContrasena(esPrimeraVez: true)
+                case .contrasena:
+                    VistaContrasena(esPrimeraVez: false)
+                case .lista:
                     VistaBovedas()
-                }
-            }
-        }
-        .environment(store)
-        // Desde aquí, con la instancia que SwiftUI conservó de verdad: hacerlo
-        // en `VaultStore.init` registraba copias que se descartan.
-        .onAppear {
-            store.registrarSesion()
-            // El delegado no tiene acceso al entorno de SwiftUI: se le deja aquí
-            // la forma de recuperar la ventana si se cancela el cierre.
-            VentanaPrincipal.reabrir = { abrirVentana(id: VentanaPrincipal.id) }
-        }
-        .animation(.easeInOut(duration: 0.2), value: store.estado)
-        // La capa de progreso cubre todas las pantallas: cifrar y descifrar puede
-        // ocurrir tanto desde la lista como desde el detalle.
-        .overlay {
-            if store.muestraCapaDeProgreso { CapaDeProgreso(progreso: store.progreso) }
-        }
-        .alert("No se pudo completar la operación",
-               isPresented: Binding(get: { store.mensajeDeError != nil },
-                                    set: { if !$0 { store.mensajeDeError = nil } })) {
-            Button("Entendido", role: .cancel) { store.mensajeDeError = nil }
-        } message: {
-            Text(store.mensajeDeError ?? "")
-        }
-        .alert("Listo",
-               isPresented: Binding(get: { store.aviso != nil },
-                                    set: { if !$0 { store.aviso = nil } })) {
-            Button("Entendido", role: .cancel) { store.aviso = nil }
-        } message: {
-            Text(store.aviso ?? "")
-        }
-    }
-}
-
-/// Tapa la ventana mientras se cifra o descifra. Además de informar, evita que se
-/// toque nada a mitad de una operación que está moviendo archivos de verdad.
-struct CapaDeProgreso: View {
-    let progreso: Progreso?
-
-    var body: some View {
-        ZStack {
-            Rectangle().fill(.regularMaterial)
-
-            VStack(spacing: 14) {
-                if let progreso {
-                    Text(progreso.titulo)
-                        .font(.headline)
-
-                    ProgressView(value: progreso.fraccion)
-                        .progressViewStyle(.linear)
-                        .frame(width: 280)
-
-                    VStack(spacing: 4) {
-                        Text(progreso.detalle)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
-                        Text("\(progreso.actual) de \(progreso.total)")
-                            .monospacedDigit()
+                case .detalle:
+                    if let actual = store.bovedaActual {
+                        VistaDetalle(boveda: actual)
+                    } else {
+                        // La bóveda desapareció (disco expulsado, por ejemplo).
+                        VistaBovedas()
                     }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(width: 280)
-                } else {
-                    ProgressView()
-                    Text("Trabajando…")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
                 }
             }
-            .padding(28)
+            .environment(store)
+            // Desde aquí, con la instancia que SwiftUI conservó de verdad: hacerlo
+            // en `VaultStore.init` registraba copias que se descartan.
+            .onAppear {
+                store.registrarSesion()
+                // El delegado no tiene acceso al entorno de SwiftUI: se le deja aquí
+                // la forma de recuperar la ventana si se cancela el cierre.
+                VentanaPrincipal.reabrir = { abrirVentana(id: VentanaPrincipal.id) }
+            }
+            .animation(.easeInOut(duration: 0.2), value: store.estado)
+            // La capa de progreso cubre todas las pantallas: cifrar y descifrar puede
+            // ocurrir tanto desde la lista como desde el detalle.
+            .overlay {
+                if store.muestraCapaDeProgreso { CapaDeProgreso(progreso: store.progreso) }
+            }
+            .alert("No se pudo completar la operación",
+                   isPresented: Binding(get: { store.mensajeDeError != nil },
+                                        set: { if !$0 { store.mensajeDeError = nil } })) {
+                Button("Entendido", role: .cancel) { store.mensajeDeError = nil }
+            } message: {
+                Text(store.mensajeDeError ?? "")
+            }
+            .alert("Listo",
+                   isPresented: Binding(get: { store.aviso != nil },
+                                        set: { if !$0 { store.aviso = nil } })) {
+                Button("Entendido", role: .cancel) { store.aviso = nil }
+            } message: {
+                Text(store.aviso ?? "")
+            }
         }
-        .transition(.opacity)
     }
-}
 
-#Preview("Raíz") {
-    VistaRaiz()
+    /// Tapa la ventana mientras se cifra o descifra. Además de informar, evita que se
+    /// toque nada a mitad de una operación que está moviendo archivos de verdad.
+    struct CapaDeProgreso: View {
+        let progreso: Progreso?
+
+        var body: some View {
+            ZStack {
+                Rectangle().fill(.regularMaterial)
+
+                VStack(spacing: 14) {
+                    if let progreso {
+                        Text(progreso.titulo)
+                            .font(.headline)
+
+                        ProgressView(value: progreso.fraccion)
+                            .progressViewStyle(.linear)
+                            .frame(width: 280)
+
+                        VStack(spacing: 4) {
+                            Text(progreso.detalle)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                            Text("\(progreso.actual) de \(progreso.total)")
+                                .monospacedDigit()
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 280)
+                    } else {
+                        ProgressView()
+                        Text("Trabajando…")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(28)
+            }
+            .transition(.opacity)
+        }
+    }
+
+    // Con PreviewProvider y no con #Preview: la macro necesita Xcode y este proyecto
+    // se compila con las herramientas de línea de comandos.
+    struct Vista_Raz_1: PreviewProvider {
+        static var previews: some View {
+            Group {
+            VistaRaiz()
+        }
+        .previewDisplayName("Raíz")
+    }
 }

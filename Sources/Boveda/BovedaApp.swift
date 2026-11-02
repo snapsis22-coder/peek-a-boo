@@ -8,6 +8,12 @@ struct BovedaApp: App {
     /// Necesario para recibir los archivos abiertos desde el Finder.
     @NSApplicationDelegateAdaptor(DelegadoDeApp.self) private var delegado
 
+    init() {
+        // Cifrando o descifrando no se cierra la app a medias.
+        Actualizaciones.compartido.ocupada = { VaultStore.enUso?.ocupada ?? false }
+        Actualizaciones.compartido.arrancar()
+    }
+
     var body: some Scene {
         // Con identificador para poder recuperarla desde el delegado si se
         // cancela el cierre tras pulsar la ⓧ.
@@ -21,6 +27,7 @@ struct BovedaApp: App {
         .commands {
             // El menú «Nuevo» por defecto no tiene sentido aquí todavía.
             CommandGroup(replacing: .newItem) {}
+            CommandGroup(after: .appInfo) { ComandosDeActualizacion() }
         }
     }
 }
